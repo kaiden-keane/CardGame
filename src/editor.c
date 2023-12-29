@@ -8,7 +8,7 @@ GuiEntityEditorState entity_editor_state;
 Entity *editing_entity = NULL;
 
 void EntityEditorUpdateFrame(World *world) {
-  if (IsKeyPressed(KEY_E) && world->grabbing_entity && !entity_editor_state.EntityEditorWindowBoxActive) {
+  if (IsKeyPressed(KEY_E) && world->selected_entity && !entity_editor_state.EntityEditorWindowBoxActive) {
     entity_editor_state = InitGuiEntityEditor();
     TraceLog(LOG_INFO, "bool: %d", entity_editor_state.EntityEditorWindowBoxActive);
     // set screen position;
@@ -16,7 +16,7 @@ void EntityEditorUpdateFrame(World *world) {
 
 
     // Get Variables in there
-    editing_entity = world->grabbing_entity;
+    editing_entity = world->selected_entity;
     entity_editor_state.HealthSpinnerValue = editing_entity->health_cap;
     entity_editor_state.MovementSpinnerValue = editing_entity->movement_cap;
     strcpy(entity_editor_state.NameTextBoxText, editing_entity->name_buffer);
@@ -59,7 +59,7 @@ void EditorUpdateFrame(
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     Entity *entity_selected = EntityFindByWorldCoord(world->entities, mouse_world_coord);
     if (entity_selected)
-      world->grabbing_entity = entity_selected;
+      world->selected_entity = entity_selected;
   }
   if (mouse_world_pos.x >= 0 && mouse_world_pos.y >= 0 && mouse_world_pos.x < world->width && mouse_world_pos.y < world->height) {
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {

@@ -58,7 +58,7 @@ int main() {
   player->animation_state = AnimationState_running;
 
   Entity *enemy = EntityAlloc(perm_arena, world.entities, "susan");
-  enemy->health_cap = 7;
+  enemy->health_cap = 10;
   enemy->health = 7;
   enemy->movement_cap = 5;
   enemy->movement_left = 5;

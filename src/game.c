@@ -83,8 +83,8 @@ void GamePlayUpdate(
     }
   }
 
-  if (world->grabbing_entity && !world->grabbing_entity->path) {
-    world->selected_path = WorldCoordListFindPath(world, temp_arena, world->grabbing_entity->grid_pos, mouse_coord, 0);
+  if (world->selected_entity && !world->selected_entity->path) {
+    world->selected_path = WorldCoordListFindPath(world, temp_arena, world->selected_entity->grid_pos, mouse_coord, 0);
   }
 
   // this is garbage will clean up later
@@ -109,10 +109,10 @@ void GamePlayUpdate(
   } else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
     Entity *entity_clicked = EntityFindByWorldCoord(world->entities, mouse_coord);
     if (entity_clicked) {
-      world->grabbing_entity = entity_clicked;
-    } else if (world->grabbing_entity) {
+      world->selected_entity = entity_clicked;
+    } else if (world->selected_entity) {
       // Move Entity Stuff
-      Entity *entity = world->grabbing_entity;
+      Entity *entity = world->selected_entity;
       if (world->selected_path) {
         I32 movement_distance = entity->movement_left;
         Vector2 center = {0.5f, 0.5f};

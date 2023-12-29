@@ -109,7 +109,7 @@ void WorldDraw(World *world) {
       if (entity->path) 
         WorldCoordListDraw(world, entity->path, entity->path_index);
 
-      if (entity == world->grabbing_entity) {
+      if (entity == world->selected_entity) {
 
         I32 movement_distance = entity->movement_left;
 
@@ -152,7 +152,7 @@ void WorldDraw(World *world) {
       DrawTexturePro(texture, texture_source_rect, entity_rect, Vector2Zero(), 0, WHITE);
       
 
-      if (entity == world->grabbing_entity) {
+      if (entity == world->selected_entity) {
         DrawRectangleLinesEx(entity_rect, 0.05, GREEN );
       }
     }
