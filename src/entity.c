@@ -1,8 +1,15 @@
+/*
+all logic specific to entities resides here
+entites are all nodes in a linked list!
+*/
+
 #include "entity.h"
 #include <string.h>
 
 
-
+/*
+adds a new entity at the end of the entity list
+*/
 void EntitiesAppend(Entities *list, Entity *entity) {
   Entity *last = list->last; 
   if (list->last) {
@@ -17,6 +24,9 @@ void EntitiesAppend(Entities *list, Entity *entity) {
   }
 }
 
+/*
+allocates a new entity and returns its memory address
+*/
 Entity *EntityAlloc(Arena *arena, Entities *list, const char *name) {
   Entity *entity = NULL;
 

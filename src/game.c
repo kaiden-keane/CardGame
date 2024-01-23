@@ -1,3 +1,7 @@
+/*
+all the general game logic will be in this file
+*/
+
 #include "game.h"
 #include "agent.h"
 #include "card_types.h"
@@ -8,6 +12,9 @@
 #include <stdio.h> // for putchar()
 
 
+/*
+gets user input related to the camera location and updates it
+*/
 void CameraUpdate(World *world) {
   Vector2 direction = Vector2Zero();
 
@@ -51,7 +58,10 @@ void CameraUpdate(World *world) {
 
 }
 
-
+/*
+moves the entity AFTER its new location has already been decided
+collects no user input
+*/
 void EntityMoveEntity(Arena *turn_arena, World *world) {
   Entity *entity = world->selected_entity;
   I32 movement_distance = entity->movement_left;
@@ -88,7 +98,10 @@ void EntityMoveEntity(Arena *turn_arena, World *world) {
 }
 
 
-
+/*
+updates everything related to gameplay every turn
+handles user input related to movement and cards
+*/
 void GamePlayUpdate(  
   World *world,
   Arena *perm_arena, 
@@ -178,7 +191,9 @@ void GamePlayUpdate(
 }
 
 
-
+/*
+moves the entity through its path
+*/
 void EntityUpdatePathPosition(Entity *entity) {
   const F32 speed = 10.0;
 
@@ -258,6 +273,9 @@ int EntityCompareY(void const *entity_a, void const *entity_b) {
   return a->grid_pos.y - b->grid_pos.y;
 }
 
+/*
+sorts the entities by their Y value
+*/
 void EntitySort(Entities *list, Arena *temp_arena) {
   TempArena temp = TempArenaInit(temp_arena);
 
@@ -286,8 +304,11 @@ void EntitySort(Entities *list, Arena *temp_arena) {
   TempArenaDeinit(temp);
 }
 
+
+/*
+goes through every entity and updates changes each frame
+*/
 void EntityUpdate(World *world, Arena *perm_arena) {
-  // ForEachEntity(entity, list->first) {
   Entities *list = world->entities;
   EntitySort(list, perm_arena);
   if (world->entities->grid)
@@ -309,68 +330,68 @@ void EntityUpdate(World *world, Arena *perm_arena) {
   }
 }
 
-
+/*
+CURRENTLY EVER USED
+draws all the gui
+*/
 void GameGuiDraw(World *world, Arena *turn_arena) {
-    DrawText(TextFormat("Turn: %i", world->turn_count), 0, 0, 20, WHITE);
+  DrawText(TextFormat("Turn: %i", world->turn_count), 0, 0, 20, WHITE);
 
-    CardListHandDraw(world->player.hand);
-    if (world->grabbing_card)
-      CardDraw(world->grabbing_card);
+  CardListHandDraw(world->player.hand);
+  if (world->grabbing_card)
+    CardDraw(world->grabbing_card);
 
-    DrawText(TextFormat("Turn: %lu", world->turn_count), 0 ,0 , 20, WHITE);
+  DrawText(TextFormat("Turn: %lu", world->turn_count), 0 ,0 , 20, WHITE);
 
-    Rectangle discard_rect = (Rectangle){
-      .height = 80,
-      .width = 80,
-      .x =  10,
-      .y = GetScreenHeight() - 90,
-    };
+  Rectangle discard_rect = (Rectangle){
+    .height = 80,
+    .width = 80,
+    .x =  10,
+    .y = GetScreenHeight() - 90,
+  };
 
-    Rectangle deck_rect = (Rectangle){
-      .height = 80,
-      .width = 80,
-      .x =  GetScreenWidth() - 90,
-      .y = GetScreenHeight() - 90,
-    };
+  Rectangle deck_rect = (Rectangle){
+    .height = 80,
+    .width = 80,
+    .x =  GetScreenWidth() - 90,
+    .y = GetScreenHeight() - 90,
+  };
 
-    Rectangle end_turn_rect = (Rectangle){
-      .height = 30,
-      .width = 80,
-      .x = GetScreenWidth() - 90,
-      .y = GetScreenHeight() - 130,
-    };
+  Rectangle end_turn_rect = (Rectangle){
+    .height = 30,
+    .width = 80,
+    .x = GetScreenWidth() - 90,
+    .y = GetScreenHeight() - 130,
+  };
 
-    //debug
-    Rectangle print_entity_grid_rect = (Rectangle){
-      .height = 30,
-      .width = 80,
-      .x = GetScreenWidth() - 90,
-      .y = GetScreenHeight() - 170,
-    };
+  //debug
+  Rectangle print_entity_grid_rect = (Rectangle){
+    .height = 30,
+    .width = 80,
+    .x = GetScreenWidth() - 90,
+    .y = GetScreenHeight() - 170,
+  };
 
-    DrawRectangleRounded(discard_rect, .4, 2, RAYWHITE);
-    DrawTextEx(GetFontDefault(), TextFormat("%lu", world->player.discard->count), (Vector2){40, GetScreenHeight() - 50}, 20, 1, BLACK);
-    
-    DrawRectangleRounded(deck_rect, .4, 2, RAYWHITE);
-    DrawTextEx(GetFontDefault(), TextFormat("%lu", world->player.deck->count), (Vector2){GetScreenWidth() - 40, GetScreenHeight() - 50}, 20, 1, BLACK);
-    
-    // Game Intermediate Mode Gui
-    if (GuiButton(end_turn_rect, "End Turn")) {
-      EndTurn(world);
-      WorldUpdateTurn(world, turn_arena);
-    }
+  DrawRectangleRounded(discard_rect, .4, 2, RAYWHITE);
+  DrawTextEx(GetFontDefault(), TextFormat("%lu", world->player.discard->count), (Vector2){40, GetScreenHeight() - 50}, 20, 1, BLACK);
+  
+  DrawRectangleRounded(deck_rect, .4, 2, RAYWHITE);
+  DrawTextEx(GetFontDefault(), TextFormat("%lu", world->player.deck->count), (Vector2){GetScreenWidth() - 40, GetScreenHeight() - 50}, 20, 1, BLACK);
+  
+  // Game Intermediate Mode Gui
+  if (GuiButton(end_turn_rect, "End Turn")) {
+    EndTurn(world);
+    WorldUpdateTurn(world, turn_arena);
+  }
 
-    if (GuiButton(print_entity_grid_rect, "Print Entities")) {
-      for (U32 y = 0; y < world->height ; y++) {
-        for (U32 x = 0; x < world->width; x++) {
-          U32 index = WorldIndexFromWorldCoord(world, (WorldCoord){x, y});
-          if (world->entities->grid[index]) putchar(world->entities->grid[index]->name_buffer[0]);
-          else putchar('*');
-        }
-        putchar('\n');
+  if (GuiButton(print_entity_grid_rect, "Print Entities")) {
+    for (U32 y = 0; y < world->height ; y++) {
+      for (U32 x = 0; x < world->width; x++) {
+        U32 index = WorldIndexFromWorldCoord(world, (WorldCoord){x, y});
+        if (world->entities->grid[index]) putchar(world->entities->grid[index]->name_buffer[0]);
+        else putchar('*');
       }
-      
-    }
-
-
+      putchar('\n');
+    } 
+  }
 }
